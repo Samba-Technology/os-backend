@@ -10,7 +10,7 @@ export class UsersController {
 
     @Post()
     @ApiCreatedResponse({ type: UserEntity })
-    async create(@Body() { email, password }: CreateUserDto) {
-        return this.usersService.create(email, password)
+    async create(@Body() { name, email, password }: CreateUserDto) {
+        return this.usersService.create(name, email, password)
     }
 }
