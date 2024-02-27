@@ -30,13 +30,14 @@ enum Role {
   USER
 }
 
-model Students {
+model Student {
   id          Int       @id @default(autoincrement())
   name        String
   class       String
   ra          String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt        
+  ocurrences  StudentOnOcurrences[]
 }
 
 model Ocurrence {
@@ -45,22 +46,32 @@ model Ocurrence {
   responsibleId Int?
   description   String
   level         Levels
-  status        Status
+  status        Status    @default(OPENED)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  students      StudentOnOcurrences[]
   user          User      @relation("Ocurrence_user", fields: [userId], references: [id])
   responsible   User?     @relation("Ocurrence_responsible", fields: [responsibleId], references: [id])
 }
 
+model StudentOnOcurrences {
+  studentId     Int
+  ocurrenceId   Int
+  ocurrence     Ocurrence @relation(fields: [ocurrenceId], references: [id])
+  student       Student   @relation(fields: [studentId], references: [id])
+  
+  @@id([studentId, ocurrenceId])
+}
+
 enum Levels {
-  high
-  medium
-  low
+  HIGH
+  MEDIUM
+  LOW
 }
 
 enum Status {
-  opened
-  assumed
-  waiting
-  resolved
+  OPENED
+  ASSUMED
+  WAITING
+  RESOLVED
 }
