@@ -1,16 +1,35 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Post, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/user.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RequestWithUser } from 'src/types/request';
 
 @Controller('users')
+@ApiTags('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     @ApiCreatedResponse({ type: UserEntity })
-    async create(@Body() { name, email, password }: CreateUserDto) {
-        return this.usersService.create(name, email, password)
+    async create(
+        @Body() { name, email, password }: CreateUserDto,
+        @Request() req: RequestWithUser
+    ) {
+        return this.usersService.create(name, email, password, req.user.role)
     }
+
+    @Get('me')
+    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: UserEntity })
+    async findMe(@Request() req: RequestWithUser) {
+        const user = await this.usersService.findOne(req.user.id)
+        if (!user) {
+            throw new NotFoundException('Usuário não encontrado.')
+        }
+        return new UserEntity(user)
+    }
+
 }
