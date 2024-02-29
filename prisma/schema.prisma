@@ -37,7 +37,7 @@ model Student {
   ra          String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt        
-  ocurrences  StudentOnOcurrences[]
+  ocurrences  Ocurrence[]
 }
 
 model Ocurrence {
@@ -49,18 +49,9 @@ model Ocurrence {
   status        Status    @default(OPENED)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  students      StudentOnOcurrences[]
+  students      Student[]
   user          User      @relation("Ocurrence_user", fields: [userId], references: [id])
   responsible   User?     @relation("Ocurrence_responsible", fields: [responsibleId], references: [id])
-}
-
-model StudentOnOcurrences {
-  studentId     Int
-  ocurrenceId   Int
-  ocurrence     Ocurrence @relation(fields: [ocurrenceId], references: [id])
-  student       Student   @relation(fields: [studentId], references: [id])
-  
-  @@id([studentId, ocurrenceId])
 }
 
 enum Levels {

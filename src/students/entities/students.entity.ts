@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Student } from "@prisma/client";
 
-export class StudentListEntity implements Student {
-    constructor(partial: Partial<StudentListEntity>) {
+export class StudentsEntity implements Student {
+    constructor(partial: Partial<StudentsEntity>) {
         Object.assign(this, partial)
     }
 
@@ -15,9 +15,12 @@ export class StudentListEntity implements Student {
     @ApiProperty()
     class: string;
 
+    @ApiProperty()
     ra: string
 
+    @ApiProperty()
     createdAt: Date;
 
+    @ApiProperty()
     updatedAt: Date;
 }

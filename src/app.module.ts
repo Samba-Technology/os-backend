@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { PrismaService } from './prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { StudentsModule } from './students/students.module';
+import { OcurrencesModule } from './ocurrences/ocurrences.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -18,7 +19,8 @@ import configuration from './config/configuration';
       isGlobal: true,
       load: [configuration]
     }),
-    StudentsModule
+    StudentsModule,
+    OcurrencesModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

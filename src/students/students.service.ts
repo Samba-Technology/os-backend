@@ -7,7 +7,7 @@ export class StudentsService {
     constructor(private prisma: PrismaService) { }
 
     async findStudents(userRole: string) {
-        if (!isAdmin(userRole)) throw new UnauthorizedException('Você não pode execultar essa ação')
+        if (!isAdmin(userRole)) throw new UnauthorizedException('Você não pode executar essa ação')
         try {
             return this.prisma.student.findMany()
         } catch (e) {
