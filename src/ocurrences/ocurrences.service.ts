@@ -16,7 +16,7 @@ export class OcurrencesService {
                     level: level,
                     userId: userId,
                     students: {
-                        connect: students.map((student: Student) => ({ id: student.id }))
+                        connect: students.map((student: Student) => ({ ra: student.ra }))
                     }
                 }
             })

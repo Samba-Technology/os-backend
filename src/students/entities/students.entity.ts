@@ -7,16 +7,13 @@ export class StudentsEntity implements Student {
     }
 
     @ApiProperty()
-    id: number
+    ra: string
 
     @ApiProperty()
     name: string
 
     @ApiProperty()
     class: string;
-
-    @ApiProperty()
-    ra: string
 
     @ApiProperty()
     createdAt: Date;
