@@ -1,10 +1,11 @@
-import { Body, Controller, Get, NotFoundException, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'src/types/request';
+import { UserListEntity } from './entities/userList.entity';
 
 @Controller('users')
 @ApiTags('users')
@@ -19,6 +20,16 @@ export class UsersController {
         @Request() req: RequestWithUser
     ) {
         return this.usersService.create(name, email, password, req.user.role)
+    }
+
+    @Get()
+    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: UserListEntity })
+    async getUsers(
+        @Request() req: RequestWithUser,
+        @Query() query: any
+        ) {
+        return await this.usersService.findUsers(req.user.role, parseInt(query.page), parseInt(query.limit))
     }
 
     @Get('me')
