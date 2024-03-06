@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { OcurrencesService } from './ocurrences.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
@@ -15,7 +15,7 @@ export class OcurrencesController {
     @UseGuards(JwtAuthGuard)
     @ApiCreatedResponse({ type: OcurrenceEntity })
     async create(
-        @Body() {description, level, students}: OcurrenceDto,
+        @Body() { description, level, students }: OcurrenceDto,
         @Request() req: RequestWithUser
     ) {
         return this.ocurrencesService.create(description, level, students, req.user.id)
@@ -29,5 +29,15 @@ export class OcurrencesController {
         @Query() query: any
     ) {
         return await this.ocurrencesService.findOcurrences(req.user.id, req.user.role, parseInt(query.page), parseInt(query.limit))
+    }
+
+    @Put(':id')
+    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: OcurrenceEntity })
+    async assumeOcurrence(
+        @Param('id') id: string,
+        @Request() req: RequestWithUser
+    ) {
+        return await this.ocurrencesService.assumeOcurrence(parseInt(id), req.user.id, req.user.role)
     }
 }
