@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { User } from "@prisma/client";
+import { Ocurrence } from "@prisma/client";
 
 type Pagination = {
     page: number,
@@ -7,13 +7,13 @@ type Pagination = {
     total: number
 }
 
-export class UserListEntity {
-    constructor(partial: Partial<UserListEntity>) {
+export class OcurrenceListEntity {
+    constructor(partial: Partial<OcurrenceListEntity>) {
         Object.assign(this, partial)
     }
 
     @ApiProperty()
-    data: User[]
+    data: Ocurrence[]
 
     @ApiProperty()
     meta: Pagination

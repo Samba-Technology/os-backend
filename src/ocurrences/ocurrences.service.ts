@@ -7,8 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class OcurrencesService {
     constructor(private prisma: PrismaService) { }
 
-    async create(description: string, level: Levels, students: [], userRole, userId) {
-        if (!isAdmin(userRole)) throw new UnauthorizedException('Você não pode executar essa ação.')
+    async create(description: string, level: Levels, students: [], userId) {
         try {
             await this.prisma.ocurrence.create({
                 data: {
@@ -22,6 +21,35 @@ export class OcurrencesService {
             })
         } catch (e) {
             console.error(e)
+            throw new BadRequestException('Algo deu errado.')
+        }
+    }
+
+    async findOcurrences(userId: number, userRole: string, page: number, limit: number) {
+        try {
+            const total = await this.prisma.ocurrence.count({
+                ...(isAdmin(userRole) ? null : {
+                    where: {
+                        userId: userId
+                    }
+                })
+            })
+
+            const ocurrences = await this.prisma.ocurrence.findMany({
+                where: {
+                    ...(isAdmin(userRole) ? null : { userId: userId })
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+                include: {
+                    students: true,
+                    user: true,
+                    responsible: true
+                }
+            })
+
+            return ({ data: ocurrences, meta: { page: page, limit: limit, total: total } })
+        } catch (e) {
             throw new BadRequestException('Algo deu errado.')
         }
     }

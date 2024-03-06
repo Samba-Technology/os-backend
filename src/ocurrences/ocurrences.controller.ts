@@ -1,10 +1,11 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { OcurrencesService } from './ocurrences.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { OcurrenceDto } from './dto/ocurrences.dto';
 import { RequestWithUser } from 'src/types/request';
-import { OcurrenceEntity } from './entities/ocurrences.entity';
+import { OcurrenceEntity } from './entities/ocurrence.entity';
+import { OcurrenceListEntity } from './entities/ocurrenceList.entity';
 
 @Controller('ocurrences')
 export class OcurrencesController {
@@ -17,6 +18,16 @@ export class OcurrencesController {
         @Body() {description, level, students}: OcurrenceDto,
         @Request() req: RequestWithUser
     ) {
-        return this.ocurrencesService.create(description, level, students, req.user.role, req.user.id)
+        return this.ocurrencesService.create(description, level, students, req.user.id)
+    }
+
+    @Get()
+    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: OcurrenceListEntity })
+    async getOcurrences(
+        @Request() req: RequestWithUser,
+        @Query() query: any
+    ) {
+        return await this.ocurrencesService.findOcurrences(req.user.id, req.user.role, parseInt(query.page), parseInt(query.limit))
     }
 }

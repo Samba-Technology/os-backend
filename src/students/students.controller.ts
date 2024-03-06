@@ -14,8 +14,8 @@ export class StudentsController {
     @Get()
     @UseGuards(JwtAuthGuard)
     @ApiOkResponse({ type: StudentsEntity })
-    async findStudents(@Request() req: RequestWithUser) {
-        return this.studentsService.findStudents(req.user.role)
+    async findStudents() {
+        return this.studentsService.findStudents()
     }
 
     @Post()
