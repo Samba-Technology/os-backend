@@ -14,13 +14,55 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  role      Role      @default(USER)
+  id                  Int         @id @default(autoincrement())
+  email               String      @unique
+  password            String
+  name                String
+  role                Role        @default(USER)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  ocurrences          Ocurrence[] @relation("Ocurrence_user")
+  assignedOcurrences  Ocurrence[] @relation("Ocurrence_responsible")
 }
 
 enum Role {
   ADMIN
   USER
+}
+
+model Student {
+  ra          String    @id @unique
+  name        String
+  class       String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt        
+  ocurrences  Ocurrence[]
+}
+
+model Ocurrence {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  responsibleId Int?
+  description   String
+  dispatch      String?
+  level         Levels
+  status        Status    @default(OPENED)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  students      Student[]
+  user          User      @relation("Ocurrence_user", fields: [userId], references: [id])
+  responsible   User?     @relation("Ocurrence_responsible", fields: [responsibleId], references: [id])
+}
+
+enum Levels {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum Status {
+  OPENED
+  ASSUMED
+  WAITING
+  RESOLVED
 }
