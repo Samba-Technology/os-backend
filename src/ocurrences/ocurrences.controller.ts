@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { OcurrencesService } from './ocurrences.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
@@ -50,5 +50,15 @@ export class OcurrencesController {
         @Body() { dispatch }: OcurrenceDto
     ) {
         return await this.ocurrencesService.dispatchOcurrence(parseInt(id), req.user.role, dispatch)
+    }
+
+    @Delete(':id')
+    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: OcurrenceEntity })
+    async conclueOcurrence(
+        @Param('id') id: string,
+        @Request() req: RequestWithUser,
+    ) {
+        return await this.ocurrencesService.conclueOcurrence(parseInt(id), req.user.role)
     }
 }
