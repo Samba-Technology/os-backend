@@ -44,6 +44,7 @@ model Ocurrence {
   userId        Int
   responsibleId Int?
   description   String
+  dispatch      String?
   level         Levels
   status        Status    @default(OPENED)
   createdAt     DateTime  @default(now())

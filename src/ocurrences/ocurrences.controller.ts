@@ -40,4 +40,15 @@ export class OcurrencesController {
     ) {
         return await this.ocurrencesService.assumeOcurrence(parseInt(id), req.user.id, req.user.role)
     }
+
+    @Post(':id')
+    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: OcurrenceEntity })
+    async disptachOcurrence(
+        @Param('id') id: string,
+        @Request() req: RequestWithUser,
+        @Body() { dispatch }: OcurrenceDto
+    ) {
+        return await this.ocurrencesService.dispatchOcurrence(parseInt(id), req.user.role, dispatch)
+    }
 }

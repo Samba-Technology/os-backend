@@ -19,6 +19,9 @@ export class OcurrenceEntity implements Ocurrence {
     description: string;
 
     @ApiProperty()
+    dispatch: string;
+
+    @ApiProperty()
     level: $Enums.Levels;
 
     @ApiProperty()

@@ -79,4 +79,29 @@ export class OcurrencesService {
             throw new BadRequestException('Algo deu errado.')
         }
     }
+
+    async dispatchOcurrence(ocurrenceId: number, userRole: string, dispatch: string) {
+        if (!isAdmin(userRole)) throw new UnauthorizedException('Você não pode executar essa ação.')
+        try {
+            const ocurrence = await this.prisma.ocurrence.update({
+                where: {
+                    id: ocurrenceId
+                },
+                data: {
+                    dispatch: dispatch,
+                    status: "WAITING"
+                },
+                include: {
+                    user: true,
+                    responsible: true,
+                    students: true
+                }
+            })
+
+            return ocurrence
+        } catch (e) {
+            console.log(e)
+            throw new BadRequestException('Algo deu errado.')
+        }
+    }
 }
