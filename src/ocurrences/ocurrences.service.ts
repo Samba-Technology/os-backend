@@ -25,19 +25,19 @@ export class OcurrencesService {
         }
     }
 
-    async findOcurrences(userId: number, userRole: string, page: number, limit: number) {
+    async findOcurrences(userId: number, userRole: string, page: number, limit: number, isArchive: string) {
         try {
             const total = await this.prisma.ocurrence.count({
-                ...(isAdmin(userRole) ? null : {
-                    where: {
-                        userId: userId
-                    }
-                })
+                where: {
+                    ...(isAdmin(userRole)) ? null : { userId: userId },
+                    ...(isArchive === "true" ? { status: "RESOLVED" } : { NOT: { status: "RESOLVED" } })
+                }
             })
 
             const ocurrences = await this.prisma.ocurrence.findMany({
                 where: {
-                    ...(isAdmin(userRole) ? null : { userId: userId })
+                    ...(isAdmin(userRole) ? null : { userId: userId }),
+                    ...(isArchive === "true" ? { status: "RESOLVED" } : { NOT: { status: "RESOLVED" } })
                 },
                 skip: (page - 1) * limit,
                 take: limit,
@@ -50,6 +50,7 @@ export class OcurrencesService {
 
             return ({ data: ocurrences, meta: { page: page, limit: limit, total: total } })
         } catch (e) {
+            console.log(e)
             throw new BadRequestException('Algo deu errado.')
         }
     }
@@ -57,7 +58,6 @@ export class OcurrencesService {
     async assumeOcurrence(ocurrenceId: number, userId: number, userRole: string) {
         if (!isAdmin(userRole)) throw new UnauthorizedException('Você não pode executar essa ação.')
         try {
-
             const ocurrence = await this.prisma.ocurrence.update({
                 where: {
                     id: ocurrenceId
@@ -111,10 +111,10 @@ export class OcurrencesService {
             const ocurrence = await this.prisma.ocurrence.update({
                 where: {
                     id: ocurrenceId
-                }, 
+                },
                 data: {
                     status: "RESOLVED"
-                }, 
+                },
                 include: {
                     user: true,
                     responsible: true,
