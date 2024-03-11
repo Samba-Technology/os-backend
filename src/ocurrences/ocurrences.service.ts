@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { Levels, Student } from '@prisma/client';
+import { Levels } from '@prisma/client';
 import { isAdmin } from 'src/helpers/authorization';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class OcurrencesService {
     constructor(private prisma: PrismaService) { }
 
-    async create(description: string, level: Levels, students: [], userId) {
+    async create(description: string, level: Levels, students: string[], userId) {
         try {
             await this.prisma.ocurrence.create({
                 data: {
@@ -15,7 +15,7 @@ export class OcurrencesService {
                     level: level,
                     userId: userId,
                     students: {
-                        connect: students.map((student: Student) => ({ ra: student.ra }))
+                        connect: students.map((ra: string) => ({ ra: ra }))
                     }
                 }
             })
@@ -25,20 +25,19 @@ export class OcurrencesService {
         }
     }
 
-    async findOcurrences(userId: number, userRole: string, page: number, limit: number, isArchive: string) {
+    async findOcurrences(userId: number, userRole: string, page: number, limit: number, isArchive: string, query: string) {
         try {
+            const where: any = {
+                ...(isAdmin(userRole)) ? null : { userId: userId },
+                ...(isArchive === "true" ? { status: "RESOLVED" } : { NOT: { status: "RESOLVED" } }),
+            }
+
             const total = await this.prisma.ocurrence.count({
-                where: {
-                    ...(isAdmin(userRole)) ? null : { userId: userId },
-                    ...(isArchive === "true" ? { status: "RESOLVED" } : { NOT: { status: "RESOLVED" } })
-                }
+                where: where
             })
 
             const ocurrences = await this.prisma.ocurrence.findMany({
-                where: {
-                    ...(isAdmin(userRole) ? null : { userId: userId }),
-                    ...(isArchive === "true" ? { status: "RESOLVED" } : { NOT: { status: "RESOLVED" } })
-                },
+                where: where,
                 skip: (page - 1) * limit,
                 take: limit,
                 include: {
