@@ -25,12 +25,13 @@ export class OcurrencesService {
         }
     }
 
-    async findOcurrences(userId: number, userRole: string, page: number, limit: number, isArchive: string, queryStudent: string) {
+    async findOcurrences(userId: number, userRole: string, page: number, limit: number, isArchive: string, queryStudent: string, queryUser: number) {
         try {
             const where: any = {
                 ...(isAdmin(userRole)) ? null : { userId: userId },
                 ...(isArchive === "true" ? { status: "RESOLVED" } : { NOT: { status: "RESOLVED" } }),
-                ...(queryStudent && { students: { some: { ra: queryStudent } } })
+                ...(queryStudent && { students: { some: { ra: queryStudent } } }),
+                ...(queryUser && { userId: queryUser })
             }
 
             const total = await this.prisma.ocurrence.count({

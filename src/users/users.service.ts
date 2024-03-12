@@ -38,13 +38,11 @@ export class UsersService {
         if (!isAdmin(userRole)) throw new UnauthorizedException('Você não pode executar essa ação.')
         try {
             const total = await this.prisma.user.count()
-            const users = await this.prisma.user.findMany({
-                skip: (page - 1) * limit,
-                take: limit
-            })
+            const users = await this.prisma.user.findMany(page && limit ? { skip: (page - 1) * limit, take: limit } : undefined)
 
             return ({ data: users, meta: { page: page, limit: limit, total: total } })
         } catch (e) {
+            console.log(e)
             throw new BadRequestException('Algo deu errado.')
         }
     }
