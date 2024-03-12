@@ -21,5 +21,5 @@ export class OcurrenceDto {
   @IsArray()
   @IsNotEmpty()
   @ApiProperty()
-  students: [];
+  students: string[];
 }

@@ -28,7 +28,7 @@ export class OcurrencesController {
         @Request() req: RequestWithUser,
         @Query() query: any
     ) {
-        return await this.ocurrencesService.findOcurrences(req.user.id, req.user.role, parseInt(query.page), parseInt(query.limit), query.isArchive)
+        return await this.ocurrencesService.findOcurrences(req.user.id, req.user.role, parseInt(query.page), parseInt(query.limit), query.isArchive, query.queryStudent, parseInt(query.queryUser))
     }
 
     @Put(':id')
