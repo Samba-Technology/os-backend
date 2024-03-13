@@ -34,13 +34,19 @@ export class UsersService {
         return this.prisma.user.findUnique({ where: { id } })
     }
 
-    async findUsers(userRole: string, page: number, limit: number) {
+    async findUsers(userRole: string, page: number, limit: number, queryUser: string) {
         if (!isAdmin(userRole)) throw new UnauthorizedException('Você não pode executar essa ação.')
         try {
-            const total = await this.prisma.user.count({ where: { deleted: null } })
+            const total = await this.prisma.user.count({
+                where: {
+                    deleted: null,
+                    ...(queryUser && { id: parseInt(queryUser) })
+                }
+            })
             const users = await this.prisma.user.findMany({
                 where: {
-                    deleted: null
+                    deleted: null,
+                    ...(queryUser && { id: parseInt(queryUser) })
                 },
                 ...(page && limit ? { skip: (page - 1) * limit, take: limit } : undefined)
             })

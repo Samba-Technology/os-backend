@@ -29,7 +29,7 @@ export class UsersController {
         @Request() req: RequestWithUser,
         @Query() query: any
     ) {
-        return await this.usersService.findUsers(req.user.role, parseInt(query.page), parseInt(query.limit))
+        return await this.usersService.findUsers(req.user.role, parseInt(query.page), parseInt(query.limit), query.queryUser)
     }
 
     @Get('me')
