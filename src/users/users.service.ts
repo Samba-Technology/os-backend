@@ -37,12 +37,35 @@ export class UsersService {
     async findUsers(userRole: string, page: number, limit: number) {
         if (!isAdmin(userRole)) throw new UnauthorizedException('Você não pode executar essa ação.')
         try {
-            const total = await this.prisma.user.count()
-            const users = await this.prisma.user.findMany(page && limit ? { skip: (page - 1) * limit, take: limit } : undefined)
+            const total = await this.prisma.user.count({ where: { deleted: null } })
+            const users = await this.prisma.user.findMany({
+                where: {
+                    deleted: null
+                },
+                ...(page && limit ? { skip: (page - 1) * limit, take: limit } : undefined)
+            })
 
             return ({ data: users, meta: { page: page, limit: limit, total: total } })
         } catch (e) {
             console.log(e)
+            throw new BadRequestException('Algo deu errado.')
+        }
+    }
+
+    async deleteUser(id: string, userRole: string) {
+        if (!isAdmin(userRole)) throw new UnauthorizedException('Você não pode executar essa ação.')
+        try {
+            const user = await this.prisma.user.update({
+                where: {
+                    id: parseInt(id)
+                },
+                data: {
+                    deleted: new Date()
+                }
+            })
+
+            return user
+        } catch (e) {
             throw new BadRequestException('Algo deu errado.')
         }
     }

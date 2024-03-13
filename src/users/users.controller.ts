@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
@@ -28,7 +28,7 @@ export class UsersController {
     async getUsers(
         @Request() req: RequestWithUser,
         @Query() query: any
-        ) {
+    ) {
         return await this.usersService.findUsers(req.user.role, parseInt(query.page), parseInt(query.limit))
     }
 
@@ -43,4 +43,13 @@ export class UsersController {
         return new UserEntity(user)
     }
 
+    @Delete(':id')
+    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: UserEntity })
+    async deleteUser(
+        @Param('id') id: string,
+        @Request() req: RequestWithUser
+    ) {
+        return this.usersService.deleteUser(id, req.user.role)
+    }
 }
