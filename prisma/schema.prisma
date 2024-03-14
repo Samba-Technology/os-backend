@@ -21,6 +21,7 @@ model User {
   role                Role        @default(USER)
   createdAt           DateTime    @default(now())
   updatedAt           DateTime    @updatedAt
+  deleted             DateTime?    
   ocurrences          Ocurrence[] @relation("Ocurrence_user")
   assignedOcurrences  Ocurrence[] @relation("Ocurrence_responsible")
 }

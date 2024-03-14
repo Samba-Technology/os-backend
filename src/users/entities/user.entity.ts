@@ -25,4 +25,6 @@ export class UserEntity implements User {
 
     @ApiProperty()
     updatedAt: Date;
+
+    deleted: Date;
 }
