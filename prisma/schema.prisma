@@ -44,8 +44,8 @@ model Ocurrence {
   id            Int       @id @default(autoincrement())
   userId        Int
   responsibleId Int?
-  description   String
-  dispatch      String?
+  description   String    @db.VarChar(1024)
+  dispatch      String?   @db.VarChar(1024)
   level         Levels
   status        Status    @default(OPENED)
   createdAt     DateTime  @default(now())
