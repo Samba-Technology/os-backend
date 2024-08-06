@@ -25,6 +25,40 @@ export class OcurrencesService {
         }
     }
 
+    async editOcurrence(ocurrenceId: number, userId: number, description: string, level: Levels, students: string[]) {
+        try {
+            const verify = await this.prisma.ocurrence.findUnique({
+                where: {
+                    id: ocurrenceId
+                }
+            })
+
+            if (verify.userId != userId) throw new UnauthorizedException("Você não pode execultar essa ação.")
+
+            const ocurrence = await this.prisma.ocurrence.update({
+                where: {
+                    id: ocurrenceId
+                },
+                data: {
+                    description: description,
+                    level: level,
+                    students: {
+                        set: students.map((ra: string) => ({ ra: ra }))
+                    }
+                },
+                include: {
+                    user: true,
+                    responsible: true,
+                    students: true
+                }
+            })
+
+            return ocurrence
+        } catch (e) {
+            throw new BadRequestException('Algo deu errado.')
+        }
+    }
+
     async findOcurrences(userId: number, userRole: string, page: number, limit: number, isArchive: string, queryStudent: string, queryUser: number) {
         try {
             const where: any = {
