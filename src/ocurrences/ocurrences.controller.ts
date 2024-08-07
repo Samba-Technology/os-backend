@@ -52,6 +52,17 @@ export class OcurrencesController {
         return await this.ocurrencesService.dispatchOcurrence(parseInt(id), req.user.role, dispatch)
     }
 
+    @Post('/edit/:id')
+    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: OcurrenceEntity })
+    async editOcurrence(
+        @Param('id') id: string,
+        @Request() req: RequestWithUser,
+        @Body() { description, level, students }: OcurrenceDto
+    ) {
+        return await this.ocurrencesService.editOcurrence(parseInt(id), req.user.id, description, level, students)
+    }
+
     @Delete(':id')
     @UseGuards(JwtAuthGuard)
     @ApiOkResponse({ type: OcurrenceEntity })
