@@ -72,4 +72,14 @@ export class OcurrencesController {
     ) {
         return await this.ocurrencesService.conclueOcurrence(parseInt(id), req.user.role)
     }
+
+    @Delete('/cancel/:id')
+    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: OcurrenceEntity })
+    async cancelOcurrence(
+        @Param('id') id: string,
+        @Request() req: RequestWithUser,
+    ) {
+        return await this.ocurrencesService.cancelOcurrence(parseInt(id), req.user.id)
+    }
 }

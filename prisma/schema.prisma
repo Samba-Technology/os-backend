@@ -66,4 +66,5 @@ enum Status {
   ASSUMED
   WAITING
   RESOLVED
+  CANCELED
 }

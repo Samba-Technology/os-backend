@@ -63,9 +63,21 @@ export class OcurrencesService {
         try {
             const where: any = {
                 ...(isAdmin(userRole)) ? null : { userId: userId },
-                ...(isArchive === "true" ? { status: "RESOLVED" } : { NOT: { status: "RESOLVED" } }),
                 ...(queryStudent && { students: { some: { ra: queryStudent } } }),
-                ...(queryUser && { userId: queryUser })
+                ...(queryUser && { userId: queryUser }),
+                ...(isArchive === "true" ? {
+                    OR: [
+                        { status: "RESOLVED" },
+                        { status: "CANCELED" }
+                    ]
+                } : {
+                    NOT: {
+                        OR: [
+                            { status: "RESOLVED" },
+                            { status: "CANCELED" }
+                        ]
+                    }
+                })
             }
 
             const total = await this.prisma.ocurrence.count({
@@ -149,6 +161,36 @@ export class OcurrencesService {
                 },
                 data: {
                     status: "RESOLVED"
+                },
+                include: {
+                    user: true,
+                    responsible: true,
+                    students: true
+                }
+            })
+
+            return ocurrence
+        } catch (e) {
+            throw new BadRequestException('Algo deu errado.')
+        }
+    }
+
+    async cancelOcurrence(ocurrenceId: number, userId: number) {
+        try {
+            const verify = await this.prisma.ocurrence.findUnique({
+                where: {
+                    id: ocurrenceId
+                }
+            })
+
+            if (verify.userId != userId) throw new UnauthorizedException('Você não pode execultar essa ação.')
+
+            const ocurrence = await this.prisma.ocurrence.update({
+                where: {
+                    id: ocurrenceId
+                },
+                data: {
+                    status: "CANCELED"
                 },
                 include: {
                     user: true,
