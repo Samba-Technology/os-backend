@@ -34,7 +34,7 @@ export class StudentsService {
             return null
         } catch (e) {
             if (e.status === 409) {
-                throw new ConflictException('Conta já existente.')
+                throw new ConflictException('Aluno já existente.')
             }
             throw new BadRequestException('Algo deu errado.')
         }
