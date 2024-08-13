@@ -8,7 +8,11 @@ export class StudentsService {
 
     async findStudents() {
         try {
-            return this.prisma.student.findMany()
+            return this.prisma.student.findMany({
+                include: {
+                    ocurrences: true
+                }
+            })
         } catch (e) {
             throw new BadRequestException('Algo deu errado.')
         }
@@ -30,7 +34,7 @@ export class StudentsService {
             return null
         } catch (e) {
             if (e.status === 409) {
-                throw new ConflictException('Conta já existente.')
+                throw new ConflictException('Aluno já existente.')
             }
             throw new BadRequestException('Algo deu errado.')
         }

@@ -48,6 +48,9 @@ export class UsersService {
                     deleted: null,
                     ...(queryUser && { id: parseInt(queryUser) })
                 },
+                include: {
+                    ocurrences: true
+                },
                 ...(page && limit ? { skip: (page - 1) * limit, take: limit } : undefined)
             })
 
