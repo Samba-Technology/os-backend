@@ -26,7 +26,7 @@ export class OcurrencesController {
   @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({ type: OcurrenceEntity })
   async create(
-    @Body() { description, level, students }: OcurrenceDto,
+    @Body() { description, level, students, tutors }: OcurrenceDto,
     @Request() req: RequestWithUser,
   ) {
     return this.ocurrencesService.create(
@@ -34,6 +34,7 @@ export class OcurrencesController {
       level,
       students,
       req.user.id,
+      tutors,
     );
   }
 
@@ -88,7 +89,7 @@ export class OcurrencesController {
   async editOcurrence(
     @Param('id') id: string,
     @Request() req: RequestWithUser,
-    @Body() { description, level, students }: OcurrenceDto,
+    @Body() { description, level, students, tutors }: OcurrenceDto,
   ) {
     return await this.ocurrencesService.editOcurrence(
       parseInt(id),
@@ -96,6 +97,7 @@ export class OcurrencesController {
       description,
       level,
       students,
+      tutors,
     );
   }
 

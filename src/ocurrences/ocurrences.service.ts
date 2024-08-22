@@ -11,7 +11,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class OcurrencesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(description: string, level: Levels, students: string[], userId) {
+  async create(
+    description: string,
+    level: Levels,
+    students: string[],
+    userId,
+    tutors: number[],
+  ) {
     try {
       await this.prisma.ocurrence.create({
         data: {
@@ -20,6 +26,9 @@ export class OcurrencesService {
           userId: userId,
           students: {
             connect: students.map((ra: string) => ({ ra: ra })),
+          },
+          tutors: {
+            connect: tutors.map((id: number) => ({ id: id })),
           },
         },
       });
@@ -35,6 +44,7 @@ export class OcurrencesService {
     description: string,
     level: Levels,
     students: string[],
+    tutors: number[],
   ) {
     try {
       const verify = await this.prisma.ocurrence.findUnique({
@@ -55,6 +65,9 @@ export class OcurrencesService {
           level: level,
           students: {
             set: students.map((ra: string) => ({ ra: ra })),
+          },
+          tutors: {
+            connect: tutors.map((id: number) => ({ id: id })),
           },
         },
         include: {
@@ -109,6 +122,7 @@ export class OcurrencesService {
           students: true,
           user: true,
           responsible: true,
+          tutors: true,
         },
       });
 
