@@ -43,7 +43,54 @@ export class UsersService {
     }
   }
 
-  findOne(id: number) {
+  async edit(
+    userId: string,
+    name: string,
+    email: string,
+    password: string,
+    userRole: string,
+  ) {
+    if (!isAdmin(userRole))
+      throw new UnauthorizedException('Você não pode executar essa ação.');
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: parseInt(userId),
+        },
+      });
+
+      if (!user)
+        throw new BadRequestException(
+          'Nenhum usuário foi encontrado com esse Id.',
+        );
+
+      const emailVerify = await this.prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (emailVerify)
+        throw new ConflictException('Email já utilizado por outro usuário.');
+
+      const edited = await this.prisma.user.update({
+        where: {
+          id: parseInt(userId),
+        },
+        data: {
+          name: name,
+          email: email,
+          password: await bcrypt.hash(password, 15),
+        },
+      });
+
+      return edited;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findOne(id: number) {
     return this.prisma.user.findUnique({ where: { id } });
   }
 

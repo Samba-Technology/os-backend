@@ -11,7 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiAcceptedResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -31,6 +36,17 @@ export class UsersController {
     @Request() req: RequestWithUser,
   ) {
     return this.usersService.create(name, email, password, req.user.role);
+  }
+
+  @Post(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiAcceptedResponse({ type: UserEntity })
+  async edit(
+    @Body() { name, email, password }: CreateUserDto,
+    @Request() req: RequestWithUser,
+    @Param('id') id: string,
+  ) {
+    return this.usersService.edit(id, name, email, password, req.user.role);
   }
 
   @Get()

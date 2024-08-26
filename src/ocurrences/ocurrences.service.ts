@@ -124,6 +124,11 @@ export class OcurrencesService {
           responsible: true,
           tutors: true,
         },
+        ...(isArchive === 'true' && {
+          orderBy: {
+            id: 'desc',
+          },
+        }),
       });
 
       return {
@@ -131,7 +136,6 @@ export class OcurrencesService {
         meta: { page: page, limit: limit, total: total },
       };
     } catch (e) {
-      console.log(e);
       throw new BadRequestException('Algo deu errado.');
     }
   }
