@@ -6,10 +6,14 @@ import {
 import { Levels } from '@prisma/client';
 import { isAdmin } from 'src/helpers/authorization';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { OcurrencesGateway } from './ocurrences.gateway';
 
 @Injectable()
 export class OcurrencesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private ocurrenceGateway: OcurrencesGateway,
+  ) {}
 
   async create(
     description: string,
@@ -19,7 +23,7 @@ export class OcurrencesService {
     tutors: number[],
   ) {
     try {
-      await this.prisma.ocurrence.create({
+      const ocurrence = await this.prisma.ocurrence.create({
         data: {
           description: description,
           level: level,
@@ -31,9 +35,16 @@ export class OcurrencesService {
             connect: tutors.map((id: number) => ({ id: id })),
           },
         },
+        include: {
+          user: true,
+          responsible: true,
+          students: true,
+          tutors: true,
+        },
       });
+
+      this.ocurrenceGateway.notifyNewOcurrence(ocurrence);
     } catch (e) {
-      console.error(e);
       throw new BadRequestException('Algo deu errado.');
     }
   }
