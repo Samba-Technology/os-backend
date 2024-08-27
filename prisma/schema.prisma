@@ -22,6 +22,7 @@ model User {
   createdAt           DateTime    @default(now())
   updatedAt           DateTime    @updatedAt
   deleted             DateTime?    
+  ocurrenceTutor      Ocurrence[]
   ocurrences          Ocurrence[] @relation("Ocurrence_user")
   assignedOcurrences  Ocurrence[] @relation("Ocurrence_responsible")
 }
@@ -51,6 +52,7 @@ model Ocurrence {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   students      Student[]
+  tutors        User[]
   user          User      @relation("Ocurrence_user", fields: [userId], references: [id])
   responsible   User?     @relation("Ocurrence_responsible", fields: [responsibleId], references: [id])
 }

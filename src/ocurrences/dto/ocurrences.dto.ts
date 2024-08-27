@@ -1,6 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Levels } from "@prisma/client";
-import { IsArray, IsNotEmpty, IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { Levels } from '@prisma/client';
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class OcurrenceDto {
   @IsString()
@@ -22,4 +22,9 @@ export class OcurrenceDto {
   @IsNotEmpty()
   @ApiProperty()
   students: string[];
+
+  @IsArray()
+  @IsNotEmpty()
+  @ApiProperty()
+  tutors: number[];
 }
