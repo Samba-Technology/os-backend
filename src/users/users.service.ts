@@ -70,7 +70,7 @@ export class UsersService {
         },
       });
 
-      if (emailVerify)
+      if (emailVerify && emailVerify.email !== user.email)
         throw new ConflictException('Email já utilizado por outro usuário.');
 
       const edited = await this.prisma.user.update({
