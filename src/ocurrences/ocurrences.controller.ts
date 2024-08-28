@@ -124,6 +124,7 @@ export class OcurrencesController {
     return await this.ocurrencesService.cancelOcurrence(
       parseInt(id),
       req.user.id,
+      req.user.role,
     );
   }
 }
