@@ -231,7 +231,7 @@ export class OcurrencesService {
     }
   }
 
-  async cancelOcurrence(ocurrenceId: number, userId: number) {
+  async cancelOcurrence(ocurrenceId: number, userId: number, userRole: string) {
     try {
       const verify = await this.prisma.ocurrence.findUnique({
         where: {
@@ -239,7 +239,7 @@ export class OcurrencesService {
         },
       });
 
-      if (verify.userId != userId)
+      if (verify.userId != userId && !isAdmin(userRole))
         throw new UnauthorizedException('Você não pode execultar essa ação.');
 
       const ocurrence = await this.prisma.ocurrence.update({
