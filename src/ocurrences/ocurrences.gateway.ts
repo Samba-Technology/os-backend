@@ -14,4 +14,8 @@ export class OcurrencesGateway {
   notifyNewOcurrence(ocurrence: Ocurrence) {
     this.server.emit('newOcurrence', ocurrence);
   }
+
+  notifyEditOcurrence(ocurrence: Ocurrence) {
+    this.server.emit('editOcurrence', ocurrence);
+  }
 }

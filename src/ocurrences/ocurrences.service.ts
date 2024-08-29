@@ -88,6 +88,7 @@ export class OcurrencesService {
         },
       });
 
+      this.ocurrenceGateway.notifyEditOcurrence(ocurrence);
       return ocurrence;
     } catch (e) {
       throw new BadRequestException('Algo deu errado.');
@@ -170,6 +171,7 @@ export class OcurrencesService {
         },
       });
 
+      this.ocurrenceGateway.notifyEditOcurrence(ocurrence);
       return ocurrence;
     } catch (e) {
       console.log(e);
@@ -200,6 +202,7 @@ export class OcurrencesService {
         },
       });
 
+      this.ocurrenceGateway.notifyEditOcurrence(ocurrence);
       return ocurrence;
     } catch (e) {
       console.log(e);
@@ -225,6 +228,7 @@ export class OcurrencesService {
         },
       });
 
+      this.ocurrenceGateway.notifyEditOcurrence(ocurrence);
       return ocurrence;
     } catch (e) {
       throw new BadRequestException('Algo deu errado.');
@@ -256,6 +260,7 @@ export class OcurrencesService {
         },
       });
 
+      this.ocurrenceGateway.notifyEditOcurrence(ocurrence);
       return ocurrence;
     } catch (e) {
       throw new BadRequestException('Algo deu errado.');
