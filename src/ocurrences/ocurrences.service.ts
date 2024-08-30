@@ -85,6 +85,7 @@ export class OcurrencesService {
           user: true,
           responsible: true,
           students: true,
+          tutors: true,
         },
       });
 
@@ -168,6 +169,7 @@ export class OcurrencesService {
           user: true,
           responsible: true,
           students: true,
+          tutors: true,
         },
       });
 
@@ -199,6 +201,7 @@ export class OcurrencesService {
           user: true,
           responsible: true,
           students: true,
+          tutors: true,
         },
       });
 
@@ -225,6 +228,7 @@ export class OcurrencesService {
           user: true,
           responsible: true,
           students: true,
+          tutors: true,
         },
       });
 
@@ -257,6 +261,7 @@ export class OcurrencesService {
           user: true,
           responsible: true,
           students: true,
+          tutors: true,
         },
       });
 
