@@ -115,7 +115,10 @@ export class UsersService {
           : undefined),
       });
 
-      return { data: users, meta: { page: page, limit: limit, total: total } };
+      return {
+        data: users.sort((a, b) => a.name.localeCompare(b.name)),
+        meta: { page: page, limit: limit, total: total },
+      };
     } catch (e) {
       console.log(e);
       throw new BadRequestException('Algo deu errado.');
