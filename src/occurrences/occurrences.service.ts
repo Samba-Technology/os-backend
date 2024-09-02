@@ -6,13 +6,13 @@ import {
 import { Levels } from '@prisma/client';
 import { isAdmin } from 'src/helpers/authorization';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { OcurrencesGateway } from './ocurrences.gateway';
+import { OccurrencesGateway } from './occurrences.gateway';
 
 @Injectable()
-export class OcurrencesService {
+export class OccurrencesService {
   constructor(
     private prisma: PrismaService,
-    private ocurrenceGateway: OcurrencesGateway,
+    private occurrenceGateway: OccurrencesGateway,
   ) {}
 
   async create(
@@ -23,7 +23,7 @@ export class OcurrencesService {
     tutors: number[],
   ) {
     try {
-      const ocurrence = await this.prisma.ocurrence.create({
+      const occurrence = await this.prisma.ocurrence.create({
         data: {
           description: description,
           level: level,
@@ -43,14 +43,14 @@ export class OcurrencesService {
         },
       });
 
-      this.ocurrenceGateway.notifyNewOcurrence(ocurrence);
+      this.occurrenceGateway.notifyNewOccurrence(occurrence);
     } catch (e) {
       throw new BadRequestException('Algo deu errado.');
     }
   }
 
-  async editOcurrence(
-    ocurrenceId: number,
+  async editOccurrence(
+    occurrenceId: number,
     userId: number,
     description: string,
     level: Levels,
@@ -60,16 +60,16 @@ export class OcurrencesService {
     try {
       const verify = await this.prisma.ocurrence.findUnique({
         where: {
-          id: ocurrenceId,
+          id: occurrenceId,
         },
       });
 
       if (verify.userId != userId)
         throw new UnauthorizedException('Você não pode execultar essa ação.');
 
-      const ocurrence = await this.prisma.ocurrence.update({
+      const occurrence = await this.prisma.ocurrence.update({
         where: {
-          id: ocurrenceId,
+          id: occurrenceId,
         },
         data: {
           description: description,
@@ -89,14 +89,14 @@ export class OcurrencesService {
         },
       });
 
-      this.ocurrenceGateway.notifyEditOcurrence(ocurrence);
-      return ocurrence;
+      this.occurrenceGateway.notifyEditOccurrence(occurrence);
+      return occurrence;
     } catch (e) {
       throw new BadRequestException('Algo deu errado.');
     }
   }
 
-  async findOcurrences(
+  async findOccurrences(
     userId: number,
     userRole: string,
     page: number,
@@ -127,7 +127,7 @@ export class OcurrencesService {
         where: where,
       });
 
-      const ocurrences = await this.prisma.ocurrence.findMany({
+      const occurrences = await this.prisma.ocurrence.findMany({
         where: where,
         skip: (page - 1) * limit,
         take: limit,
@@ -145,7 +145,7 @@ export class OcurrencesService {
       });
 
       return {
-        data: ocurrences,
+        data: occurrences,
         meta: { page: page, limit: limit, total: total },
       };
     } catch (e) {
@@ -153,13 +153,17 @@ export class OcurrencesService {
     }
   }
 
-  async assumeOcurrence(ocurrenceId: number, userId: number, userRole: string) {
+  async assumeOccurrence(
+    occurrenceId: number,
+    userId: number,
+    userRole: string,
+  ) {
     if (!isAdmin(userRole))
       throw new UnauthorizedException('Você não pode executar essa ação.');
     try {
-      const ocurrence = await this.prisma.ocurrence.update({
+      const occurrence = await this.prisma.ocurrence.update({
         where: {
-          id: ocurrenceId,
+          id: occurrenceId,
         },
         data: {
           responsibleId: userId,
@@ -173,25 +177,25 @@ export class OcurrencesService {
         },
       });
 
-      this.ocurrenceGateway.notifyEditOcurrence(ocurrence);
-      return ocurrence;
+      this.occurrenceGateway.notifyEditOccurrence(occurrence);
+      return occurrence;
     } catch (e) {
       console.log(e);
       throw new BadRequestException('Algo deu errado.');
     }
   }
 
-  async dispatchOcurrence(
-    ocurrenceId: number,
+  async dispatchOccurrence(
+    occurrenceId: number,
     userRole: string,
     dispatch: string,
   ) {
     if (!isAdmin(userRole))
       throw new UnauthorizedException('Você não pode executar essa ação.');
     try {
-      const ocurrence = await this.prisma.ocurrence.update({
+      const occurrence = await this.prisma.ocurrence.update({
         where: {
-          id: ocurrenceId,
+          id: occurrenceId,
         },
         data: {
           dispatch: dispatch,
@@ -205,21 +209,21 @@ export class OcurrencesService {
         },
       });
 
-      this.ocurrenceGateway.notifyEditOcurrence(ocurrence);
-      return ocurrence;
+      this.occurrenceGateway.notifyEditOccurrence(occurrence);
+      return occurrence;
     } catch (e) {
       console.log(e);
       throw new BadRequestException('Algo deu errado.');
     }
   }
 
-  async conclueOcurrence(ocurrenceId: number, userRole: string) {
+  async conclueOccurrence(occurrenceId: number, userRole: string) {
     if (!isAdmin(userRole))
       throw new UnauthorizedException('Você não pode executar essa ação.');
     try {
-      const ocurrence = await this.prisma.ocurrence.update({
+      const occurrence = await this.prisma.ocurrence.update({
         where: {
-          id: ocurrenceId,
+          id: occurrenceId,
         },
         data: {
           status: 'RESOLVED',
@@ -232,27 +236,31 @@ export class OcurrencesService {
         },
       });
 
-      this.ocurrenceGateway.notifyEditOcurrence(ocurrence);
-      return ocurrence;
+      this.occurrenceGateway.notifyEditOccurrence(occurrence);
+      return occurrence;
     } catch (e) {
       throw new BadRequestException('Algo deu errado.');
     }
   }
 
-  async cancelOcurrence(ocurrenceId: number, userId: number, userRole: string) {
+  async cancelOccurrence(
+    occurrenceId: number,
+    userId: number,
+    userRole: string,
+  ) {
     try {
       const verify = await this.prisma.ocurrence.findUnique({
         where: {
-          id: ocurrenceId,
+          id: occurrenceId,
         },
       });
 
       if (verify.userId != userId && !isAdmin(userRole))
         throw new UnauthorizedException('Você não pode execultar essa ação.');
 
-      const ocurrence = await this.prisma.ocurrence.update({
+      const occurrence = await this.prisma.ocurrence.update({
         where: {
-          id: ocurrenceId,
+          id: occurrenceId,
         },
         data: {
           status: 'CANCELED',
@@ -265,8 +273,8 @@ export class OcurrencesService {
         },
       });
 
-      this.ocurrenceGateway.notifyEditOcurrence(ocurrence);
-      return ocurrence;
+      this.occurrenceGateway.notifyEditOccurrence(occurrence);
+      return occurrence;
     } catch (e) {
       throw new BadRequestException('Algo deu errado.');
     }

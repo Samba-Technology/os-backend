@@ -8,14 +8,14 @@ import { Server } from 'http';
     credentials: true,
   },
 })
-export class OcurrencesGateway {
+export class OccurrencesGateway {
   @WebSocketServer() server: Server;
 
-  notifyNewOcurrence(ocurrence: Ocurrence) {
-    this.server.emit('newOcurrence', ocurrence);
+  notifyNewOccurrence(occurrence: Ocurrence) {
+    this.server.emit('newOccurrence', occurrence);
   }
 
-  notifyEditOcurrence(ocurrence: Ocurrence) {
-    this.server.emit('editOcurrence', ocurrence);
+  notifyEditOccurrence(occurrence: Ocurrence) {
+    this.server.emit('editOccurrence', occurrence);
   }
 }

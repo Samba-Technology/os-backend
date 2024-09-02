@@ -10,26 +10,26 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { OcurrencesService } from './ocurrences.service';
+import { OccurrencesService } from './occurrences.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { OcurrenceDto } from './dto/ocurrences.dto';
+import { OccurrenceDto } from './dto/occurrences.dto';
 import { RequestWithUser } from 'src/types/request';
-import { OcurrenceEntity } from './entities/ocurrence.entity';
-import { OcurrenceListEntity } from './entities/ocurrenceList.entity';
+import { OccurrenceEntity } from './entities/occurrence.entity';
+import { OccurrenceListEntity } from './entities/occurrenceList.entity';
 
-@Controller('ocurrences')
-export class OcurrencesController {
-  constructor(private readonly ocurrencesService: OcurrencesService) {}
+@Controller('occurrences')
+export class OccurrencesController {
+  constructor(private readonly occurrencesService: OccurrencesService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @ApiCreatedResponse({ type: OcurrenceEntity })
+  @ApiCreatedResponse({ type: OccurrenceEntity })
   async create(
-    @Body() { description, level, students, tutors }: OcurrenceDto,
+    @Body() { description, level, students, tutors }: OccurrenceDto,
     @Request() req: RequestWithUser,
   ) {
-    return this.ocurrencesService.create(
+    return this.occurrencesService.create(
       description,
       level,
       students,
@@ -40,9 +40,9 @@ export class OcurrencesController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: OcurrenceListEntity })
-  async getOcurrences(@Request() req: RequestWithUser, @Query() query: any) {
-    return await this.ocurrencesService.findOcurrences(
+  @ApiOkResponse({ type: OccurrenceListEntity })
+  async getOccurrences(@Request() req: RequestWithUser, @Query() query: any) {
+    return await this.occurrencesService.findOccurrences(
       req.user.id,
       req.user.role,
       parseInt(query.page),
@@ -56,12 +56,12 @@ export class OcurrencesController {
 
   @Put(':id')
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: OcurrenceEntity })
-  async assumeOcurrence(
+  @ApiOkResponse({ type: OccurrenceEntity })
+  async assumeOccurrence(
     @Param('id') id: string,
     @Request() req: RequestWithUser,
   ) {
-    return await this.ocurrencesService.assumeOcurrence(
+    return await this.occurrencesService.assumeOccurrence(
       parseInt(id),
       req.user.id,
       req.user.role,
@@ -70,13 +70,13 @@ export class OcurrencesController {
 
   @Post(':id')
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: OcurrenceEntity })
-  async disptachOcurrence(
+  @ApiOkResponse({ type: OccurrenceEntity })
+  async disptachOccurrence(
     @Param('id') id: string,
     @Request() req: RequestWithUser,
-    @Body() { dispatch }: OcurrenceDto,
+    @Body() { dispatch }: OccurrenceDto,
   ) {
-    return await this.ocurrencesService.dispatchOcurrence(
+    return await this.occurrencesService.dispatchOccurrence(
       parseInt(id),
       req.user.role,
       dispatch,
@@ -85,13 +85,13 @@ export class OcurrencesController {
 
   @Post('/edit/:id')
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: OcurrenceEntity })
-  async editOcurrence(
+  @ApiOkResponse({ type: OccurrenceEntity })
+  async editOccurrence(
     @Param('id') id: string,
     @Request() req: RequestWithUser,
-    @Body() { description, level, students, tutors }: OcurrenceDto,
+    @Body() { description, level, students, tutors }: OccurrenceDto,
   ) {
-    return await this.ocurrencesService.editOcurrence(
+    return await this.occurrencesService.editOccurrence(
       parseInt(id),
       req.user.id,
       description,
@@ -103,12 +103,12 @@ export class OcurrencesController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: OcurrenceEntity })
-  async conclueOcurrence(
+  @ApiOkResponse({ type: OccurrenceEntity })
+  async conclueOccurrence(
     @Param('id') id: string,
     @Request() req: RequestWithUser,
   ) {
-    return await this.ocurrencesService.conclueOcurrence(
+    return await this.occurrencesService.conclueOccurrence(
       parseInt(id),
       req.user.role,
     );
@@ -116,12 +116,12 @@ export class OcurrencesController {
 
   @Delete('/cancel/:id')
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: OcurrenceEntity })
-  async cancelOcurrence(
+  @ApiOkResponse({ type: OccurrenceEntity })
+  async cancelOccurrence(
     @Param('id') id: string,
     @Request() req: RequestWithUser,
   ) {
-    return await this.ocurrencesService.cancelOcurrence(
+    return await this.occurrencesService.cancelOccurrence(
       parseInt(id),
       req.user.id,
       req.user.role,

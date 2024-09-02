@@ -1,30 +1,30 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { $Enums, User } from "@prisma/client";
+import { ApiProperty } from '@nestjs/swagger';
+import { $Enums, User } from '@prisma/client';
 
 export class UserEntity implements User {
-    constructor(partial: Partial<UserEntity>) {
-        Object.assign(this, partial)
-    }
+  constructor(partial: Partial<UserEntity>) {
+    Object.assign(this, partial);
+  }
 
-    @ApiProperty()
-    id: number;
+  @ApiProperty()
+  id: number;
 
-    @ApiProperty()
-    name: string;
+  @ApiProperty()
+  name: string;
 
-    @ApiProperty()
-    email: string;
+  @ApiProperty()
+  email: string;
 
-    @ApiProperty()
-    role: $Enums.Role;
+  @ApiProperty()
+  role: $Enums.Role;
 
-    password: string;
+  password: string;
 
-    @ApiProperty()
-    createdAt: Date;
+  @ApiProperty()
+  createdAt: Date;
 
-    @ApiProperty()
-    updatedAt: Date;
+  @ApiProperty()
+  updatedAt: Date;
 
-    deleted: Date;
+  deleted: Date;
 }
