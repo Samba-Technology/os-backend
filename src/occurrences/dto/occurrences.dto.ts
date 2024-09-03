@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Levels } from '@prisma/client';
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class OccurrenceDto {
   @IsString()
@@ -12,6 +12,10 @@ export class OccurrenceDto {
   @IsNotEmpty()
   @ApiProperty()
   dispatch: string;
+
+  @IsBoolean()
+  @ApiProperty()
+  isEdit: boolean;
 
   @IsString()
   @IsNotEmpty()

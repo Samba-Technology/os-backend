@@ -189,6 +189,7 @@ export class OccurrencesService {
     occurrenceId: number,
     userRole: string,
     dispatch: string,
+    isEdit: boolean,
   ) {
     if (!isAdmin(userRole))
       throw new UnauthorizedException('Você não pode executar essa ação.');
@@ -199,7 +200,7 @@ export class OccurrencesService {
         },
         data: {
           dispatch: dispatch,
-          status: 'WAITING',
+          ...(!isEdit && { status: 'WAITING' }),
         },
         include: {
           user: true,

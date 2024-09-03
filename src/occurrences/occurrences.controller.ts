@@ -74,12 +74,13 @@ export class OccurrencesController {
   async disptachOccurrence(
     @Param('id') id: string,
     @Request() req: RequestWithUser,
-    @Body() { dispatch }: OccurrenceDto,
+    @Body() { dispatch, isEdit }: OccurrenceDto,
   ) {
     return await this.occurrencesService.dispatchOccurrence(
       parseInt(id),
       req.user.role,
       dispatch,
+      isEdit,
     );
   }
 
