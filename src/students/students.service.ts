@@ -31,10 +31,16 @@ export class StudentsService {
 
       if (student) throw new ConflictException();
 
+      const formattedName = name
+        .toLocaleLowerCase()
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
       await this.prisma.student.create({
         data: {
           ra: ra,
-          name: name,
+          name: formattedName,
           class: series + sclass,
         },
       });
