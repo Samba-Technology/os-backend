@@ -7,6 +7,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { isAdmin } from 'src/helpers/authorization';
+import { nameFormatter } from 'src/helpers/formatter';
 
 @Injectable()
 export class UsersService {
@@ -29,7 +30,7 @@ export class UsersService {
 
       await this.prisma.user.create({
         data: {
-          name: name,
+          name: nameFormatter(name),
           email: email,
           password: await bcrypt.hash(password, 15),
         },
@@ -78,7 +79,7 @@ export class UsersService {
           id: parseInt(userId),
         },
         data: {
-          name: name,
+          name: nameFormatter(name),
           email: email,
           password: await bcrypt.hash(password, 15),
         },
