@@ -2,7 +2,9 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { isAdmin } from 'src/helpers/authorization';
 import { nameFormatter } from 'src/helpers/formatter';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -10,15 +12,28 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class StudentsService {
   constructor(private prisma: PrismaService) {}
 
-  async findStudents() {
+  async findStudents(page: number, limit: number, queryStudent: string) {
     try {
-      const students = await this.prisma.student.findMany({
-        include: {
-          ocurrences: true,
+      const total = await this.prisma.student.count({
+        where: {
+          ...(queryStudent && { ra: queryStudent }),
         },
       });
 
-      return students.sort((a, b) => a.name.localeCompare(b.name));
+      const students = await this.prisma.student.findMany({
+        where: {
+          ...(queryStudent && { ra: queryStudent }),
+        },
+        include: {
+          ocurrences: true,
+        },
+        ...(page && limit && { skip: (page - 1) * limit, take: limit }),
+      });
+
+      return {
+        data: students.sort((a, b) => a.name.localeCompare(b.name)),
+        meta: { page: page, limit: limit, total: total },
+      };
     } catch (e) {
       throw new BadRequestException('Algo deu errado.');
     }
@@ -30,7 +45,7 @@ export class StudentsService {
         where: { ra: ra },
       });
 
-      if (student) throw new ConflictException();
+      if (student) throw new ConflictException('Aluno já existente.');
 
       await this.prisma.student.create({
         data: {
@@ -41,10 +56,40 @@ export class StudentsService {
       });
       return null;
     } catch (e) {
-      if (e.status === 409) {
-        throw new ConflictException('Aluno já existente.');
-      }
-      throw new BadRequestException('Algo deu errado.');
+      throw e;
+    }
+  }
+
+  async edit(
+    studentRA: string,
+    name: string,
+    series: string,
+    sclass: string,
+    userRole: string,
+  ) {
+    if (!isAdmin(userRole))
+      throw new UnauthorizedException('Você não pode executar essa ação.');
+    try {
+      const student = await this.prisma.student.findUnique({
+        where: {
+          ra: studentRA,
+        },
+      });
+
+      if (!student)
+        throw new BadRequestException('Nenhum estudante foi encontrado.');
+
+      await this.prisma.student.update({
+        where: {
+          ra: studentRA,
+        },
+        data: {
+          name: nameFormatter(name),
+          class: series + sclass,
+        },
+      });
+    } catch (error) {
+      throw error;
     }
   }
 }

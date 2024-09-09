@@ -61,9 +61,7 @@ export class UsersService {
       });
 
       if (!user)
-        throw new BadRequestException(
-          'Nenhum usuário foi encontrado com esse Id.',
-        );
+        throw new BadRequestException('Nenhum usuário foi encontrado.');
 
       const emailVerify = await this.prisma.user.findUnique({
         where: {
@@ -111,9 +109,7 @@ export class UsersService {
         include: {
           ocurrences: true,
         },
-        ...(page && limit
-          ? { skip: (page - 1) * limit, take: limit }
-          : undefined),
+        ...(page && limit && { skip: (page - 1) * limit, take: limit }),
       });
 
       return {
