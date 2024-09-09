@@ -1,7 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, Max, Min } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, Max, Min } from 'class-validator';
 
 export class StudentDto {
+  @IsArray()
+  students: [];
+
   @IsString()
   @IsNotEmpty()
   @Min(10)

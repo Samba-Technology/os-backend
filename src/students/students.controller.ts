@@ -43,6 +43,17 @@ export class StudentsController {
     return this.studentsService.create(ra, name, series, sclass);
   }
 
+  @Post('/class/:class')
+  @UseGuards(JwtAuthGuard)
+  @ApiCreatedResponse({ type: StudentsEntity })
+  async createMany(
+    @Body() { students }: StudentDto,
+    @Request() req: RequestWithUser,
+    @Param('class') sclass: string,
+  ) {
+    return this.studentsService.createMany(students, sclass, req.user.role);
+  }
+
   @Post(':ra')
   @UseGuards(JwtAuthGuard)
   @ApiAcceptedResponse({ type: StudentsEntity })

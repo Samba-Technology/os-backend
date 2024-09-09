@@ -60,6 +60,25 @@ export class StudentsService {
     }
   }
 
+  async createMany(students: any[], sclass: string, userRole: string) {
+    if (!isAdmin(userRole))
+      throw new UnauthorizedException('Você não pode executar essa ação.');
+    try {
+      const data = await this.prisma.student.createMany({
+        data: students.map((student) => ({
+          ...student,
+          name: nameFormatter(student.name),
+          class: sclass,
+        })),
+        skipDuplicates: true,
+      });
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async edit(
     studentRA: string,
     name: string,
